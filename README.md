@@ -1,4 +1,4 @@
-# hello-world
+# Vue app. Work with auto.ria API
 
 ## Project setup
 ```
