@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # autoria-api-vue
+=======
+# Vue app. Work with auto.ria API
+>>>>>>> 86d4ff12e25aca9a975f0cdf05289034cdd35735
 
 ## Project setup
 ```
