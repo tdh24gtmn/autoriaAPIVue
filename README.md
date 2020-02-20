@@ -1,4 +1,4 @@
-# hello-world
+# autoria-api-vue
 
 ## Project setup
 ```
