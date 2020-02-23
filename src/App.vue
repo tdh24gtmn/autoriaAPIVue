@@ -26,43 +26,48 @@
       </v-toolbar-title>-->
     </v-app-bar>
 
-    <v-content>
+    <v-content class="d-flex justify-center align-center">
       <v-container fluid>
         <v-row align="center" justify="center">
-          <v-col cols="12">
-            <v-card>
-              <!-- <v-card-text>
-                <v-row>
-                  <v-col cols="12" md="6">
-                    <span>Scheme</span>
-                    <v-switch v-model="$vuetify.theme.dark" primary label="Dark" />
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <span>Drawer</span>
-                    <v-radio-group v-model="primaryDrawer.type" column>
-                      <v-radio
-                        v-for="drawer in drawers"
-                        :key="drawer"
-                        :label="drawer"
-                        :value="drawer.toLowerCase()"
-                        primary
-                      />
-                    </v-radio-group>
-                    <v-switch v-model="primaryDrawer.clipped" label="Clipped" primary />
-                    <v-switch v-model="primaryDrawer.floating" label="Floating" primary />
-                    <v-switch v-model="primaryDrawer.mini" label="Mini" primary />
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <span>Footer</span>
-                    <v-switch v-model="footer.inset" label="Inset" primary />
-                  </v-col>
-                </v-row>
+          <v-col cols="10">
+            <v-card class="mx-auto" :elevation="24">
+              <v-card-text>
+                <v-form ref="form">
+                  <v-row>
+                    <v-col cols="6" sm="6" xs="6">
+                      <v-autocomplete
+                        v-model="brand"
+                        :rules="nameRules"
+                        :items="info"
+                        item-text="name"
+                        item-value="name"
+                        :return-object="checkTrue"
+                        dense
+                        label="Марка"
+                      ></v-autocomplete>
+                    </v-col>
+                    <v-col cols="6" sm="6" xs="6">
+                      <v-autocomplete
+                        v-model="inputsObject.model"
+                        :rules="nameRules"
+                        :items="models"
+                        item-text="name"
+                        item-value="name"
+                        dense
+                        label="Модель"
+                      ></v-autocomplete>
+                    </v-col>
+                  </v-row>
+                </v-form>
               </v-card-text>
               <v-card-actions>
-                <v-spacer />
-                <v-btn text>Cancel</v-btn>
-                <v-btn text color="primary">Submit</v-btn>
-              </v-card-actions>-->
+                <div class="hidden-res">
+                  <p></p>
+                </div>
+                <div class="flex-between">
+                  <!-- <v-btn rounded @click="reset" class="reset">Reset</v-btn> -->
+                </div>
+              </v-card-actions>
             </v-card>
           </v-col>
         </v-row>
@@ -76,10 +81,9 @@
 </template>
 
 <script>
-// import func from "../vue-temp/vue-editor-bridge";
+import axios from "axios";
 export default {
   data: () => ({
-    drawers: ["Default (no property)", "Permanent", "Temporary"],
     primaryDrawer: {
       model: null,
       type: "default (no property)",
@@ -89,8 +93,64 @@ export default {
     },
     footer: {
       inset: false
-    }
+    },
+    inputsObject: {
+      brand: "",
+      model: "",
+      name: "",
+      email: "",
+      phone: ""
+    },
+    brand: {},
+    nameRules: [v => !!v || "Обязательное поле"],
+    response: {},
+    value: "",
+    marks: [],
+    info: null,
+    models: [],
+    checkTrue: true
   }),
-  computed: {}
+  mounted: function() {
+    this.$nextTick(function() {
+      axios
+        .get(
+          "https://developers.ria.com/auto/categories/1/marks?api_key=dbUQdiOGDFx1gIgcsIppZdrusE4AnA0lbrArUcAz"
+        )
+        .then(({ data }) => {
+          console.log(data);
+          this.info = data;
+          console.log(this.info);
+        })
+        .catch(({ response }) => {
+          console.log(response);
+        });
+    });
+  },
+  methods: {
+    // reset: function() {
+    //   if (confirm("Do you really want reset this form?")) {
+    //     this.$refs.form.reset();
+    //     console.log("reset:");
+    //     console.log(this.inputsObject);
+    //   }
+    // }
+  },
+  watch: {
+    "brand.value": function() {
+      console.log(this.brand.value);
+      axios
+        .get(
+          `http://api.auto.ria.com/categories/1/marks/${this.brand.value}/models?api_key=dbUQdiOGDFx1gIgcsIppZdrusE4AnA0lbrArUcAz`
+        )
+        .then(({ data }) => {
+          console.log(data);
+          this.models = data;
+          console.log(this.models);
+        })
+        .catch(({ response }) => {
+          console.log(response);
+        });
+    }
+  }
 };
 </script>
